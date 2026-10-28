@@ -154,5 +154,3 @@ Dockerfile            Python 3.12 application image
 requirements.txt      Pinned runtime/test dependencies
 FLASH_SALE_ARCHITECTURE.md  Original plan plus implementation addendum
 ```
-
-See [failure analysis and requirement checklist](docs/VALIDATION.md) for scope, known limits, and production work.
