@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101f1c">
+  <title>Orbit — Festival drop</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header><a class="wordmark" href="/">orbit<span>®</span></a><span class="edition">FESTIVAL EDITION · 001</span><span class="live"><i></i> SALE IS LIVE</span></header>
+  <main>
+    <section class="product" aria-labelledby="title">
+      <div class="eyebrow">A LITTLE LESS ORDINARY.</div>
+      <h1 id="title">Meet your<br>next <em>One.</em></h1>
+      <p class="intro">All the power. None of the noise.<br>Introducing the Orbit One in Forest.</p>
+      <div class="phone-scene" role="img" aria-label="Forest green Orbit One smartphone with two cameras">
+        <div class="orbit-ring"></div><div class="phone"><div class="cameras"><b></b><b></b><span></span></div><div class="phone-mark">orbit</div><div class="phone-caption">DESIGNED TO GO FURTHER</div></div>
+        <span class="scene-note">FOREST / 256 GB</span>
+      </div>
+      <div class="specs"><span><strong>6.7″</strong>AMOLED display</span><span><strong>50 MP</strong>Dual camera</span><span><strong>2 days</strong>Battery life</span></div>
+    </section>
+    <aside class="checkout" aria-labelledby="checkout-title">
+      <div class="drop-label">THE FESTIVAL DROP <span>500 UNITS TOTAL</span></div>
+      <h2 id="checkout-title">Orbit One</h2><p class="variant"><span class="swatch"></span> Forest green <span>·</span> 256 GB</p>
+      <div class="price">₹39,900 <span>per phone</span></div>
+      <p class="availability">A small drop. A considered choice.</p>
+      <form id="checkout-form">
+        <label for="token">Demo access token</label>
+        <input id="token" type="password" autocomplete="off" placeholder="Paste your signed customer token" required>
+        <p class="hint">Use the token command in the setup guide. Tokens stay in this browser session.</p>
+        <div class="quantity-row"><label for="quantity">Quantity</label><div class="stepper"><button type="button" id="minus" aria-label="Decrease quantity">−</button><input id="quantity" type="number" min="1" max="500" value="1" required><button type="button" id="plus" aria-label="Increase quantity">+</button></div></div>
+        <div class="total-row"><span>Order total</span><strong id="total">₹39,900</strong></div>
+        <button class="primary" id="submit" type="submit">Join the checkout queue <span>↗</span></button>
+      </form>
+      <section class="status-panel" aria-live="polite" aria-atomic="true"><span class="status-label" id="state">READY WHEN YOU ARE</span><p id="message">Your place is recorded before we check stock. A queue confirmation is not a purchase.</p><p id="countdown"></p><small id="attempt-label"></small></section>
+      <div id="payment-actions" hidden><p class="hint">Simulated payment · no real charge</p><button class="primary" id="pay">Pay successfully</button><button class="secondary" id="decline">Simulate a declined payment</button></div>
+      <button class="secondary" id="recover" hidden>Recover / retry this attempt</button>
+      <button class="secondary" id="new-attempt" hidden>Start another checkout</button>
+      <div class="assurances"><span>↺ &nbsp;Stock held for a limited time</span><span>✓ &nbsp;Full quantity or no allocation</span></div>
+    </aside>
+  </main>
+  <footer><span>GOOD THINGS COME IN SMALL DROPS.</span><span>Demo store · Simulated payments · Prices in INR</span></footer>
+</body>
+</html>

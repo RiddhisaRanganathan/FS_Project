@@ -1,0 +1,75 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: sale
+      POSTGRES_PASSWORD: sale
+      POSTGRES_DB: sale
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: ["postgres:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sale"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru"]
+    ports: ["127.0.0.1:6379:6379"]
+  kafka:
+    image: apache/kafka:3.9.1
+    ports: ["127.0.0.1:9092:9092"]
+    environment:
+      KAFKA_NODE_ID: 1
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: INTERNAL://:19092,EXTERNAL://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:19092,EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_LOG_RETENTION_BYTES: 1073741824
+    volumes: ["kafka:/tmp/kraft-combined-logs"]
+  migrate:
+    build: .
+    command: ["python", "-m", "app", "migrate"]
+    environment: &environment
+      DATABASE_URL: postgresql://sale:sale@postgres:5432/sale
+      REDIS_URL: redis://redis:6379/0
+      KAFKA_BOOTSTRAP: kafka:19092
+      AUTH_SECRET: ${AUTH_SECRET:?Set AUTH_SECRET in .env}
+      ADMIN_SECRET: ${ADMIN_SECRET:?Set ADMIN_SECRET in .env}
+      RESERVATION_SECONDS: ${RESERVATION_SECONDS:-300}
+      MAX_PENDING: ${MAX_PENDING:-100000}
+      MAX_INFLIGHT: ${MAX_INFLIGHT:-64}
+      DB_POOL_SIZE: ${DB_POOL_SIZE:-12}
+      ADMISSION_PAUSED: ${ADMISSION_PAUSED:-false}
+      RESERVATIONS_PAUSED: ${RESERVATIONS_PAUSED:-false}
+      RECONCILIATION_ONLY: ${RECONCILIATION_ONLY:-false}
+    depends_on:
+      postgres: {condition: service_healthy}
+  api:
+    build: .
+    ports: ["127.0.0.1:8000:8000"]
+    environment: *environment
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    restart: unless-stopped
+  worker:
+    build: .
+    command: ["python", "-m", "app", "worker"]
+    environment: *environment
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      kafka: {condition: service_started}
+    restart: unless-stopped
+volumes:
+  postgres:
+  kafka:

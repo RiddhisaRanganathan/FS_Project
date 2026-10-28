@@ -1,0 +1,10 @@
+.venv
+.git
+.env
+.aws
+.codex
+.agents
+__pycache__
+**/__pycache__
+.pytest_cache
+test-results
